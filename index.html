@@ -14616,6 +14616,8 @@ CMSC320</p>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 </pre></div>
 
      </div>
@@ -15864,7 +15866,7 @@ jp-needs-light-background
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>There isn't a strong correlation between the length of a webtoon and the number of subscribers. The episode number clusters around 0-200.</p>
-<p>Can you believe someone made more than 1000 episodes for their webtoon? That's so wild.</p>
+<p>Can you believe someone made more than 1000 episodes for their webtoon? That's so wild!</p>
 
 </div>
 </div>
@@ -15892,7 +15894,8 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Part-4:-Hypothesis-Testing">Part 4: Hypothesis Testing<a class="anchor-link" href="#Part-4:-Hypothesis-Testing">&#182;</a></h3><p>Linear Regression</p>
+<h3 id="Part-4:-Hypothesis-Testing">Part 4: Hypothesis Testing<a class="anchor-link" href="#Part-4:-Hypothesis-Testing">&#182;</a></h3><p>In this section, we will be on developing a model that can predict the subscriber count of a webtoon. Given the amount of different categories we can use, we will solely focus on linear regression.</p>
+<p>Let's see if we can find a relationship between the categories that we hypothesized to be impactful: Genre and Rating!</p>
 
 </div>
 </div>
@@ -15905,7 +15908,32 @@ jp-needs-light-background
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define a function to get linear models:</span>
+<span class="k">def</span> <span class="nf">linear_model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[[</span><span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="n">model_90s</span> <span class="o">=</span> <span class="n">linear_model</span><span class="p">(</span><span class="n">top_100_webtoons</span><span class="p">,</span> <span class="s1">&#39;genre&#39;</span><span class="p">,</span> <span class="s1">&#39;subscribers&#39;</span><span class="p">)</span>
+<span class="n">model_10s</span> <span class="o">=</span> <span class="n">linear_model</span><span class="p">(</span><span class="n">top_500_webtoons</span><span class="p">,</span> <span class="s1">&#39;genre&#39;</span><span class="p">,</span> <span class="s1">&#39;subscribers&#39;</span><span class="p">)</span>
+
+<span class="n">model_90s</span> <span class="o">=</span> <span class="n">linear_model</span><span class="p">(</span><span class="n">top_100_webtoons</span><span class="p">,</span> <span class="s1">&#39;grade&#39;</span><span class="p">,</span> <span class="s1">&#39;subscribers&#39;</span><span class="p">)</span>
+<span class="n">model_10s</span> <span class="o">=</span> <span class="n">linear_model</span><span class="p">(</span><span class="n">top_500_webtoons</span><span class="p">,</span> <span class="s1">&#39;grade&#39;</span><span class="p">,</span> <span class="s1">&#39;subscribers&#39;</span><span class="p">)</span>
+
+<span class="c1"># unique_weeks_90s = [[x] for x in top_songs_90s[&#39;weeks&#39;].unique()]</span>
+<span class="c1"># unique_weeks_10s = [[x] for x in top_songs_10s[&#39;weeks&#39;].unique()]</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">top_songs_90s</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;weeks&#39;</span><span class="p">,</span> <span class="s1">&#39;unique_words&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;scatter&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1990-1997&#39;</span><span class="p">)</span>
+<span class="n">top_songs_10s</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;weeks&#39;</span><span class="p">,</span> <span class="s1">&#39;unique_words&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;scatter&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2010-2017&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unique_weeks_90s</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="ow">in</span> <span class="n">model_90s</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">unique_weeks_90s</span><span class="p">)])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unique_weeks_10s</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="ow">in</span> <span class="n">model_10s</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">unique_weeks_10s</span><span class="p">)])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Unique words vs Time on Billboard charts&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Weeks on charts&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of unique words&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -15920,8 +15948,48 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Part-5:-Insights-and-Conclusion">Part 5: Insights and Conclusion<a class="anchor-link" href="#Part-5:-Insights-and-Conclusion">&#182;</a></h3><h4 id="Pros-and-Cons-of-Approach">Pros and Cons of Approach<a class="anchor-link" href="#Pros-and-Cons-of-Approach">&#182;</a></h4><p>Cons: The data does not contain information about which webtoons were promoted by the site on the homepage banner. This could affect the popularity of a webtoon as there would be more visibility to the userbase. Other things not accounted along these lines are adventisements the author paid for or Webtoon.com displayed on other sites.</p>
-<h4 id="Resources-for-Further-Learning">Resources for Further Learning<a class="anchor-link" href="#Resources-for-Further-Learning">&#182;</a></h4>
+<p>Let's try to fit</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result_90s</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;unique_words ~ weeks&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">top_songs_90s</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">result_10s</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;unique_words ~ weeks&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">top_songs_10s</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1990s r_squared: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_90s</span><span class="o">.</span><span class="n">rsquared</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;2010s r_squared: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_10s</span><span class="o">.</span><span class="n">rsquared</span><span class="p">))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Part-5:-Insights-and-Conclusion">Part 5: Insights and Conclusion<a class="anchor-link" href="#Part-5:-Insights-and-Conclusion">&#182;</a></h3><h4 id="Pros-and-Cons-of-Approach">Pros and Cons of Approach<a class="anchor-link" href="#Pros-and-Cons-of-Approach">&#182;</a></h4><p>Pros:</p>
+<p>Cons: The data does not contain information about which webtoons were promoted by the site on the homepage banner. This could affect the popularity of a webtoon as there would be more visibility to the userbase. Other things not accounted along these lines are adventisements the author paid for or Webtoon.com displayed on other sites.</p>
+<h4 id="Resources-for-Further-Learning">Resources for Further Learning<a class="anchor-link" href="#Resources-for-Further-Learning">&#182;</a></h4><ul>
+<li><a href="&#39;https://en.wikipedia.org/wiki/Linear_regression&#39;">Linear Regression</a></li>
+<li><a href="&#39;https://webtoons.com&#39;">Webtoons Official Site</a></li>
+<li><a href="&#39;https://matplotlib.org&#39;">Matplotlib Documentation</a></li>
+<li><a href="&#39;https://pandas.pydata.org/pandas-docs/stable/&#39;">Pandas Documentation</a></li>
+<li><a href="&#39;https://www.kaggle.com/datasets/&#39;">Kaggle Datasets</a></li>
+</ul>
+
 </div>
 </div>
 </div>
